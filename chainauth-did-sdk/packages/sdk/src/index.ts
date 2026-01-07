@@ -4,6 +4,7 @@ export * from './core/did';
 export * from './core/wallet';
 export * from './features/recovery';
 export * from './features/credentials';
+export * from './features/payments'; // Export PaymentManager
 export * from './types';
 export * from './utils';
 
@@ -13,6 +14,7 @@ import { DIDManager } from './core/did';
 import { WalletManager } from './core/wallet';
 import { RecoveryManager } from './features/recovery';
 import { CredentialManager } from './features/credentials';
+import { PaymentManager } from './features/payments';
 import { ChainAuthConfig } from './types';
 
 export class ChainAuthSDK {
@@ -21,6 +23,7 @@ export class ChainAuthSDK {
   public wallet: WalletManager;
   public recovery: RecoveryManager;
   public credentials: CredentialManager;
+  public payments: PaymentManager;
 
   constructor(config: ChainAuthConfig) {
     this.client = new XRPLClient(config.xrplServerUrl);
