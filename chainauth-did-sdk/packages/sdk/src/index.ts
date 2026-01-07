@@ -27,14 +27,11 @@ export class ChainAuthSDK {
 
   constructor(config: ChainAuthConfig) {
     this.client = new XRPLClient(config.xrplServerUrl);
-    // Inject client into managers
+
+    // Initialize all managers with XRPLClient
     this.did = new DIDManager(this.client);
     this.wallet = new WalletManager();
-    // Assuming RecoveryManager and CredentialManager will eventually need client too, 
-    // but for now keeping them as is or updating if they accept it.
-    // Based on "Member 4" tip, we should probably pass it if they support it, 
-    // but their current implementation (read previously) didn't show constructors.
-    // I'll stick to what I know: DIDManager needs it.
+
     this.recovery = new RecoveryManager(this.client);
     this.credentials = new CredentialManager(this.client);
     this.payments = new PaymentManager(this.client);
