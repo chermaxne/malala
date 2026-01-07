@@ -20,14 +20,16 @@ export class WalletManager {
    * Securely store wallet credentials
    */
   async storeWallet(wallet: Wallet): Promise<void> {
-    // TODO: Implement secure storage
+    // In a real browser/mobile env, we'd use something secure.
+    // For this SDK limit, we might just warn or use localStorage in the app layer.
+    console.warn("Wallet storage should be handled by the application layer securely.");
   }
 
   /**
    * Retrieve stored wallet
    */
   async retrieveWallet(): Promise<Wallet | null> {
-    // TODO: Implement wallet retrieval
+    // Placeholder
     return null;
   }
 }
