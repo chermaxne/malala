@@ -31,6 +31,7 @@ export class ChainAuthSDK {
     // Initialize all managers with XRPLClient
     this.did = new DIDManager(this.client);
     this.wallet = new WalletManager();
+
     this.recovery = new RecoveryManager(this.client);
     this.credentials = new CredentialManager(this.client);
     this.payments = new PaymentManager(this.client);
