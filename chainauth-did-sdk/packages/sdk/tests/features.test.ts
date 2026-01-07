@@ -9,6 +9,7 @@ const mockAutofill = vi.fn();
 const mockRequest = vi.fn();
 const mockConnect = vi.fn();
 const mockDisconnect = vi.fn();
+const mockGetLedgerIndex = vi.fn();
 
 vi.mock('../src/core/client', () => {
     return {
@@ -18,7 +19,8 @@ vi.mock('../src/core/client', () => {
                 autofill: mockAutofill,
                 request: mockRequest,
                 connect: mockConnect,
-                disconnect: mockDisconnect
+                disconnect: mockDisconnect,
+                getLedgerIndex: mockGetLedgerIndex
             }),
             connect: mockConnect,
             disconnect: mockDisconnect
@@ -36,6 +38,7 @@ describe('ChainAuth SDK Features', () => {
         wallet = Wallet.generate();
 
         // Default mock behaviors
+        mockGetLedgerIndex.mockResolvedValue(1000000); // Mock ledger index
         mockAutofill.mockImplementation((tx) => Promise.resolve(tx));
         mockSubmitAndWait.mockResolvedValue({
             result: { meta: { TransactionResult: 'tesSUCCESS' }, hash: 'TEST_TX_HASH' }
