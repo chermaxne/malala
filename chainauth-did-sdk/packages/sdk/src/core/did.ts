@@ -14,7 +14,7 @@ export class DIDManager {
    * @param wallet The wallet signing the transaction
    * @param uri The DID Document URI (e.g., ipfs://... or https://...)
    */
-  async registerDID(wallet: Wallet, uri: string): Promise<string> {
+  async registerDID(wallet: Wallet, uri: string): Promise<{ did: string; txHash: string }> {
     const tx: DIDSet = {
       TransactionType: 'DIDSet',
       Account: wallet.address,
@@ -25,7 +25,10 @@ export class DIDManager {
     console.log(`DIDSet success: ${result.result.hash}`);
 
     // Return the standard DID format for XRPL
-    return `did:xrpl:1:${wallet.address}`;
+    return {
+      did: `did:xrpl:1:${wallet.address}`,
+      txHash: result.result.hash
+    };
   }
 
   /**
