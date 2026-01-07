@@ -4,6 +4,7 @@ export * from './core/did';
 export * from './core/wallet';
 export * from './features/recovery';
 export * from './features/credentials';
+export * from './features/payments'; // Export PaymentManager
 export * from './types';
 export * from './utils';
 
@@ -13,6 +14,7 @@ import { DIDManager } from './core/did';
 import { WalletManager } from './core/wallet';
 import { RecoveryManager } from './features/recovery';
 import { CredentialManager } from './features/credentials';
+import { PaymentManager } from './features/payments';
 import { ChainAuthConfig } from './types';
 
 export class ChainAuthSDK {
@@ -21,13 +23,22 @@ export class ChainAuthSDK {
   public wallet: WalletManager;
   public recovery: RecoveryManager;
   public credentials: CredentialManager;
+  public payments: PaymentManager;
 
   constructor(config: ChainAuthConfig) {
     this.client = new XRPLClient(config.xrplServerUrl);
+
+    // Member 1 modules (Assuming they might need client or not, but sticking to existing pattern if unknown)
+    // The prompt suggested: this.did = new DIDManager(this.client);
+    // But if I haven't implemented DIDManager update, I might break it. 
+    // I will check did.ts content first.
     this.did = new DIDManager();
     this.wallet = new WalletManager();
-    this.recovery = new RecoveryManager();
-    this.credentials = new CredentialManager();
+
+    // Member 2 modules
+    this.recovery = new RecoveryManager(this.client);
+    this.credentials = new CredentialManager(this.client);
+    this.payments = new PaymentManager(this.client);
   }
 
   async connect(): Promise<void> {
