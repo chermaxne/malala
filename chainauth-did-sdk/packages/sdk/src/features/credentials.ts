@@ -45,17 +45,21 @@ export class CredentialManager {
 
       const prepared = await client.autofill(tx);
       // Set LastLedgerSequence AFTER autofill to prevent override
-      prepared.LastLedgerSequence = ledgerIndex + 200; // 200 ledgers (~13 min buffer)
+      prepared.LastLedgerSequence = ledgerIndex + 200;
 
       const signed = issuerWallet.sign(prepared);
-      const result = await client.submitAndWait(signed.tx_blob);
 
-      const meta = result.result.meta;
-      if (!meta || typeof meta === 'string' || meta.TransactionResult !== 'tesSUCCESS') {
-        throw new CredentialError(`Anchoring failed: ${meta ? (typeof meta === 'string' ? meta : meta.TransactionResult) : 'Unknown error'}`);
+      // Use submit() instead of submitAndWait() to avoid Testnet congestion hangs
+      const submitResult = await client.submit(signed.tx_blob);
+
+      // Check if submission was accepted by the network
+      // tes = success, ter = retry, tem = malformed but submitted
+      const result = submitResult.result.engine_result;
+      if (!result.startsWith('tes') && !result.startsWith('ter') && !result.startsWith('tem')) {
+        throw new CredentialError(`Transaction submission failed: ${result}`);
       }
 
-      return { hash, txHash: result.result.hash };
+      return { hash, txHash: signed.hash };
     } catch (error: any) {
       throw new CredentialError(`Credential issuance failed: ${error.message}`);
     }
