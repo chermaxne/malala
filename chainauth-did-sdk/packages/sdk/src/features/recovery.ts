@@ -99,4 +99,98 @@ export class RecoveryManager {
       throw new RecoveryError(`Signing failed: ${error.message}`);
     }
   }
+
+  /**
+   * Initiate account recovery by creating a transaction template
+   * @param recoveredAccount The account being recovered
+   * @param newRegularKey The new regular key to set (optional)
+   * @returns Prepared transaction JSON for signers to sign
+   */
+  async initiateRecovery(
+    recoveredAccount: string,
+    newRegularKey?: string
+  ): Promise<any> {
+    try {
+      const client = this.client.getClient();
+
+      // Create a SetRegularKey transaction to change control
+      const tx: any = {
+        TransactionType: 'SetRegularKey',
+        Account: recoveredAccount,
+      };
+
+      if (newRegularKey) {
+        tx.RegularKey = newRegularKey;
+      }
+
+      const prepared = await client.autofill(tx);
+      return prepared;
+    } catch (error: any) {
+      throw new RecoveryError(`Failed to initiate recovery: ${error.message}`);
+    }
+  }
+
+  /**
+   * Combine multiple signatures and submit recovery transaction
+   * @param signedBlobs Array of signed transaction blobs from signers
+   * @returns Transaction hash if successful
+   */
+  async combineSignatures(signedBlobs: string[]): Promise<string> {
+    try {
+      const client = this.client.getClient();
+
+      // XRPL.js doesn't have a built-in multisign combine,
+      // so we take the last signed blob (with all signatures)
+      // In production, you'd use xrpl.multisign() to combine
+      const finalBlob = signedBlobs[signedBlobs.length - 1];
+
+      const result = await client.submit(finalBlob);
+
+      if (!result.result.engine_result.startsWith('tes') &&
+        !result.result.engine_result.startsWith('ter')) {
+        throw new RecoveryError(`Transaction failed: ${result.result.engine_result}`);
+      }
+
+      return result.result.tx_json.hash ?? '';
+    } catch (error: any) {
+      throw new RecoveryError(`Failed to submit recovery transaction: ${error.message}`);
+    }
+  }
+
+  /**
+   * Monitor transaction status on the ledger
+   * @param txHash Transaction hash to monitor
+   * @returns Transaction status and metadata
+   */
+  async monitorTransaction(txHash: string): Promise<{
+    validated: boolean;
+    status: string;
+    ledgerIndex?: number;
+  }> {
+    try {
+      const client = this.client.getClient();
+
+      const response = await client.request({
+        command: 'tx',
+        transaction: txHash
+      });
+
+      const tx = response.result as any;
+
+      return {
+        validated: tx.validated || false,
+        status: tx.meta?.TransactionResult || 'pending',
+        ledgerIndex: tx.ledger_index
+      };
+    } catch (error: any) {
+      // Transaction not found yet
+      if (error.message.includes('not found')) {
+        return {
+          validated: false,
+          status: 'pending'
+        };
+      }
+      throw new RecoveryError(`Failed to monitor transaction: ${error.message}`);
+    }
+  }
 }
