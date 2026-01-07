@@ -35,8 +35,9 @@ export class ChainAuthSDK {
     // Based on "Member 4" tip, we should probably pass it if they support it, 
     // but their current implementation (read previously) didn't show constructors.
     // I'll stick to what I know: DIDManager needs it.
-    this.recovery = new RecoveryManager();
-    this.credentials = new CredentialManager();
+    this.recovery = new RecoveryManager(this.client);
+    this.credentials = new CredentialManager(this.client);
+    this.payments = new PaymentManager(this.client);
   }
 
   async connect(): Promise<void> {
