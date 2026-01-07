@@ -2,12 +2,9 @@
 import { describe, it, expect } from 'vitest';
 import { DIDManager } from '../src/core/did';
 
-import { XRPLClient } from '../src/core/client';
-
 describe('DIDManager', () => {
   it('should create a DID manager instance', () => {
-    const client = new XRPLClient('wss://test');
-    const didManager = new DIDManager(client);
+    const didManager = new DIDManager();
     expect(didManager).toBeDefined();
   });
 

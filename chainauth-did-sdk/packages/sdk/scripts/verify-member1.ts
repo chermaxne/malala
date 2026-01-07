@@ -15,7 +15,6 @@ async function main() {
     // 2. Generate Wallet
     const wallet = sdk.wallet.generateWallet();
     console.log(`Generated Wallet: ${wallet.address}`);
-    console.log(`Wallet Seed:      ${wallet.seed} (SAVE THIS TO ACCESS WALLET)`);
 
     // 3. Fund Wallet
     console.log("Funding wallet...");
@@ -26,11 +25,8 @@ async function main() {
     // 4. Register DID
     const didUri = "did:chainauth:data:123";
     console.log(`Registering DID with URI: ${didUri}`);
-    const { did, txHash } = await sdk.did.registerDID(wallet, didUri);
+    const did = await sdk.did.registerDID(wallet, didUri);
     console.log(`DID Registered: ${did}`);
-    console.log(`Transaction Hash: ${txHash}`);
-    console.log(`Explorer Link (Account): https://testnet.xrpl.org/accounts/${wallet.address}`);
-    console.log(`Explorer Link (Tx):      https://testnet.xrpl.org/transactions/${txHash}`);
 
     // 5. Resolve DID
     console.log("Resolving DID...");
