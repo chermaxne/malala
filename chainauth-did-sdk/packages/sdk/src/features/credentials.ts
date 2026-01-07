@@ -41,13 +41,11 @@ export class CredentialManager {
       const client = this.client.getClient();
       // Get latest ledger index to set robust timeout
       const ledgerIndex = await client.getLedgerIndex();
-      console.log(`[DEBUG] Current Ledger Index: ${ledgerIndex}`);
-
-      tx.LastLedgerSequence = ledgerIndex + 50; // 50 ledgers buffer (~3 mins, for extreme congestion)
       tx.Fee = '5000'; // Boost fee to 0.005 XRP
 
       const prepared = await client.autofill(tx);
-      console.log(`[DEBUG] Prepared Tx: LastLedgerSequence=${prepared.LastLedgerSequence}, Fee=${prepared.Fee}`);
+      // Set LastLedgerSequence AFTER autofill to prevent override
+      prepared.LastLedgerSequence = ledgerIndex + 200; // 200 ledgers (~13 min buffer)
 
       const signed = issuerWallet.sign(prepared);
       const result = await client.submitAndWait(signed.tx_blob);
