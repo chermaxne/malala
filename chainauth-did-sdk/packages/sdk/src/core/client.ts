@@ -44,4 +44,20 @@ export class XRPLClient {
 
     return result;
   }
+  async subscribeToAccount(address: string, callback: (tx: any) => void): Promise<void> {
+    if (!this.client.isConnected()) {
+      await this.connect();
+    }
+
+    await this.client.request({
+      command: 'subscribe',
+      accounts: [address]
+    });
+
+    this.client.on('transaction', (tx) => {
+      // Filter for the specific account if needed (though subscribe filter does most work)
+      // We pass the whole tx object to the callback
+      callback(tx);
+    });
+  }
 }
