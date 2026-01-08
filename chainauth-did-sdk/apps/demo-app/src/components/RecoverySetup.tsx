@@ -1,6 +1,6 @@
 // RecoverySetup.tsx - Guardian configuration and recovery simulation
 import { useState } from 'react';
-import { Users, Shield, AlertCircle, Key } from 'lucide-react';
+import { Users, Shield, AlertCircle, Key, Copy, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Guardian {
@@ -17,6 +17,8 @@ export const RecoverySetup = () => {
   const [quorum, setQuorum] = useState(2);
   const [isSetup, setIsSetup] = useState(false);
   const [showRecovery, setShowRecovery] = useState(false);
+  const [newRegularKey, setNewRegularKey] = useState<string | null>(null);
+  const [copiedKey, setCopiedKey] = useState(false);
 
   const handleGuardianChange = (index: number, field: 'address' | 'name', value: string) => {
     const newGuardians = [...guardians];
@@ -60,12 +62,26 @@ export const RecoverySetup = () => {
     toast.info('Guardian 2 signed recovery transaction');
     
     await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Generate a mock new regular key
+    const mockNewKey = 'rNewK3yAddr3ssF0rR3c0v3ry' + Math.random().toString(36).substring(2, 7).toUpperCase();
+    setNewRegularKey(mockNewKey);
+    
     toast.success('Account recovered successfully!', {
-      description: 'Your account has been restored with a new key',
+      description: 'Your account has been restored with a new RegularKey',
       duration: 4000,
     });
     
     setShowRecovery(false);
+  };
+
+  const handleCopyKey = () => {
+    if (newRegularKey) {
+      navigator.clipboard.writeText(newRegularKey);
+      setCopiedKey(true);
+      toast.success('RegularKey copied to clipboard');
+      setTimeout(() => setCopiedKey(false), 2000);
+    }
   };
 
   const validGuardianCount = guardians.filter(g => g.address && g.name).length;
@@ -136,7 +152,7 @@ export const RecoverySetup = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 mb-6">
         {!isSetup ? (
           <button
             onClick={handleSetupRecovery}
@@ -161,6 +177,38 @@ export const RecoverySetup = () => {
           </>
         )}
       </div>
+
+      {/* New Regular Key Display */}
+      {newRegularKey && (
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <CheckCircle2 className="w-5 h-5 text-green-600" />
+            <h3 className="font-semibold text-gray-900">New RegularKey Set</h3>
+          </div>
+          <p className="text-sm text-gray-600 mb-3">
+            Your account has been recovered! This new key can now be used to control your account:
+          </p>
+          <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-2">
+            <code className="flex-1 text-sm font-mono text-gray-800 break-all">
+              {newRegularKey}
+            </code>
+            <button
+              onClick={handleCopyKey}
+              className="flex-shrink-0 p-2 hover:bg-gray-100 rounded transition-colors"
+              title="Copy to clipboard"
+            >
+              {copiedKey ? (
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+              ) : (
+                <Copy className="w-4 h-4 text-gray-600" />
+              )}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Use this address to sign transactions for your account. Your original account address remains unchanged.
+          </p>
+        </div>
+      )}
 
       {/* Recovery Simulation Modal */}
       {showRecovery && (
