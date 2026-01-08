@@ -193,4 +193,61 @@ export class RecoveryManager {
       throw new RecoveryError(`Failed to monitor transaction: ${error.message}`);
     }
   }
+
+  /**
+   * Get account information including RegularKey
+   * @param account The XRPL account address to query
+   * @returns Account information including RegularKey if set
+   */
+  async getAccountInfo(account: string): Promise<{
+    account: string;
+    balance: string;
+    regularKey?: string;
+    signerList?: Array<{
+      account: string;
+      weight: number;
+    }>;
+  }> {
+    try {
+      const client = this.client.getClient();
+
+      const response = await client.request({
+        command: 'account_info',
+        account: account,
+        ledger_index: 'validated'
+      });
+
+      const accountData = response.result.account_data;
+
+      // Get signer list if it exists
+      let signerList;
+      try {
+        const signerResponse = await client.request({
+          command: 'account_objects',
+          account: account,
+          type: 'signer_list',
+          ledger_index: 'validated'
+        });
+
+        if (signerResponse.result.account_objects.length > 0) {
+          const signerListObj = signerResponse.result.account_objects[0] as any;
+          signerList = signerListObj.SignerEntries?.map((entry: any) => ({
+            account: entry.SignerEntry.Account,
+            weight: entry.SignerEntry.SignerWeight
+          }));
+        }
+      } catch (signerError) {
+        // No signer list configured
+      }
+
+      return {
+        account: accountData.Account,
+        balance: accountData.Balance,
+        regularKey: accountData.RegularKey,
+        signerList
+      };
+    } catch (error: any) {
+      throw new RecoveryError(`Failed to get account info: ${error.message}`);
+    }
+  }
 }

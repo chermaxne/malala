@@ -70,4 +70,55 @@ export class DIDManager {
     };
     await this.client.submitAndWait(tx, wallet);
   }
+
+  /**
+   * Verify that a DID exists on-chain
+   * @param did The DID to verify (e.g., did:xrpl:1:rAddress...)
+   * @returns Object with verification status and DID document URI if found
+   */
+  async verifyDID(did: string): Promise<{ 
+    exists: boolean; 
+    uri: string | null; 
+    address: string;
+    message: string;
+  }> {
+    const parts = did.split(':');
+    if (parts.length < 4 || parts[0] !== 'did' || parts[1] !== 'xrpl') {
+      return {
+        exists: false,
+        uri: null,
+        address: '',
+        message: 'Invalid DID format. Expected: did:xrpl:network:address'
+      };
+    }
+
+    const address = parts[3];
+
+    try {
+      const uri = await this.resolveDID(did);
+      
+      if (!uri) {
+        return {
+          exists: false,
+          uri: null,
+          address,
+          message: 'DID not found on XRPL. Account may not have a DID registered.'
+        };
+      }
+
+      return {
+        exists: true,
+        uri,
+        address,
+        message: 'DID successfully verified on XRPL'
+      };
+    } catch (error: any) {
+      return {
+        exists: false,
+        uri: null,
+        address,
+        message: `Verification failed: ${error.message}`
+      };
+    }
+  }
 }
