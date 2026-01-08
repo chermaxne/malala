@@ -39,6 +39,28 @@ chainauth-did-sdk/
 
 ---
 
+## Tech Stack
+
+**Core SDK:**
+- TypeScript 5.2
+- xrpl.js (official Ripple library)
+- Zod (runtime validation)
+- Vitest (testing)
+
+**Demo App:**
+- React 18 + TypeScript
+- Vite 5 (build tool)
+- Tailwind CSS 3.3
+- Lucide React (icons)
+- Sonner (notifications)
+
+**Infrastructure:**
+- XRPL Testnet
+- Turborepo (monorepo)
+- Node.js 20.11.0+
+
+---
+
 ## Quick Start
 
 ```bash
