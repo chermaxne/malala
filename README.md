@@ -79,6 +79,48 @@ await sdk.payments.sendRLUSD(wallet, '100', recipientAddress, issuerAddress);
 await sdk.recovery.enableRecovery(wallet, [guardian1, guardian2], 2);
 ```
 
+**Real-World Example:**
+
+Chermaine creates an account and wants protection against losing her private key:
+
+1. **Setup Phase** - Chermaine adds trusted guardians
+```typescript
+// Chermaine's wallet
+const chermaine = Wallet.fromSeed('sEd...');
+
+// Guardian wallets (Alice and Bob)
+const alice = 'rAliceGuardian1...';
+const bob = 'rBobGuardian2...';
+
+// Enable recovery - requires BOTH guardians to sign
+await sdk.recovery.enableRecovery(chermaine, [alice, bob], 2);
+// On-chain: Sets SignerListSet with quorum=2
+```
+
+2. **Loss Event** - Chermaine loses her private key
+
+3. **Recovery Flow** - Guardians help Chermaine recover
+```typescript
+// Step 1: Chermaine initiates recovery with new key
+const newKey = Wallet.generate(); // Chermaine's new wallet
+const recoveryTx = await sdk.recovery.initiateRecovery(
+  chermaine.address,  // Account to recover
+  newKey.publicKey    // New key to control account
+);
+
+// Step 2: Alice signs the recovery transaction
+const aliceWallet = Wallet.fromSeed('sEd_alice...');
+const aliceSig = await sdk.recovery.signForRecovery(recoveryTx, aliceWallet);
+
+// Step 3: Bob signs the recovery transaction  
+const bobWallet = Wallet.fromSeed('sEd_bob...');
+const bobSig = await sdk.recovery.signForRecovery(recoveryTx, bobWallet);
+
+// Step 4: Combine signatures and submit (quorum met: 2/2)
+const txHash = await sdk.recovery.combineSignatures([aliceSig, bobSig]);
+// Chermaine can now use newKey to control her account!
+```
+
 **On-Chain Proof:**
 - Sets up multi-signature configuration directly on XRPL
 - Guardians can sign recovery transactions to regain account access
@@ -88,6 +130,7 @@ await sdk.recovery.enableRecovery(wallet, [guardian1, guardian2], 2);
 - Native multi-sig support (no smart contracts needed)
 - Secure and battle-tested
 - Low transaction fees (~0.00001 XRP)
+- **Account ownership preserved** - only the key changes, account history remains
 
 ---
 
