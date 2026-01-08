@@ -104,20 +104,25 @@ await sdk.recovery.enableRecovery(chermaine, [alice, bob], 2);
 // Step 1: Chermaine initiates recovery with new key
 const newKey = Wallet.generate(); // Chermaine's new wallet
 const recoveryTx = await sdk.recovery.initiateRecovery(
-  chermaine.address,  // Account to recover
-  newKey.publicKey    // New key to control account
+  chermaine.address,      // Account to recover
+  newKey.address          // New key to control account (using address, not publicKey)
 );
 
 // Step 2: Alice signs the recovery transaction
 const aliceWallet = Wallet.fromSeed('sEd_alice...');
 const aliceSig = await sdk.recovery.signForRecovery(recoveryTx, aliceWallet);
+// Returns: { tx_blob: '...', id: '...' }
 
 // Step 3: Bob signs the recovery transaction  
 const bobWallet = Wallet.fromSeed('sEd_bob...');
 const bobSig = await sdk.recovery.signForRecovery(recoveryTx, bobWallet);
+// Returns: { tx_blob: '...', id: '...' }
 
 // Step 4: Combine signatures and submit (quorum met: 2/2)
-const txHash = await sdk.recovery.combineSignatures([aliceSig, bobSig]);
+const txHash = await sdk.recovery.combineSignatures([
+  aliceSig.tx_blob,  // Use tx_blob from each signature
+  bobSig.tx_blob
+]);
 // Chermaine can now use newKey to control her account!
 ```
 
