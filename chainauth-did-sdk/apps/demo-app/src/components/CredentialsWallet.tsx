@@ -139,7 +139,7 @@ export const CredentialsWallet: React.FC = () => {
                   e.stopPropagation();
                   setSelectedCredential(credential);
                 }}
-                className="mt-3 w-full px-3 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm rounded-md transition-colors flex items-center justify-center gap-2"
+                className="mt-3 w-full px-3 py-2 border-2 border-gray-300 hover:bg-blue-50 hover:border-blue-500 active:border-blue-700 active:bg-blue-100 active:shadow-inner text-gray-700 hover:text-blue-700 active:text-blue-800 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2"
               >
                 <Eye className="w-4 h-4" />
                 View Details
