@@ -1,9 +1,9 @@
-# 🎯 ChainAuth Demo Guide
+# ChainAuth Demo Guide
 ## What to Do & What to Look Out For
 
 ---
 
-## 🚀 Pre-Demo Checklist
+## Pre-Demo Checklist
 
 ### **1. Choose Your Demo Mode**
 
@@ -32,7 +32,7 @@ USE_MOCK_DATA: false
 cd apps/demo-app
 npm run dev
 ```
-✅ Should see: `Local: http://localhost:5173/`
+Should see: `Local: http://localhost:5173/`
 
 ### **3. Open Browser**
 - Navigate to `http://localhost:5173/`
@@ -41,22 +41,22 @@ npm run dev
 
 ---
 
-## 🎬 Demo Script (5-Minute Version)
+## Demo Script (5-Minute Version)
 
 ### **Scene 1: Landing Page (30 seconds)**
 
 **What You See:**
 ```
 ┌─────────────────────────────────────────┐
-│  🔐 ChainAuth                            │
-│                                          │
+│  ChainAuth                              │
+│                                         │
 │  Decentralized Identity on XRPL         │
-│                                          │
+│                                         │
 │  [Login with ChainAuth]                 │
-│                                          │
-│  📌 Self-Sovereign Identity             │
-│  📜 Verifiable Credentials              │
-│  🛡️ Social Recovery                     │
+│                                         │
+│  Self-Sovereign Identity                │
+│  Verifiable Credentials                 │
+│  Social Recovery                        │
 └─────────────────────────────────────────┘
 ```
 
@@ -90,25 +90,25 @@ Button states:
 
 **If Mock Mode:**
 ```javascript
-🎭 Running in MOCK mode - fast demo without blockchain
-🎭 Using MOCK login (fast demo)
+Running in MOCK mode - fast demo without blockchain
+Using MOCK login (fast demo)
 ```
 > "For quick demos, we can use mock mode. But let me show you it works with real blockchain too..."
 
 **If Real Mode:**
 ```javascript
-✅ ChainAuth SDK initialized and connected to wss://s.altnet.rippletest.net:51233
-🔗 Using REAL XRPL login
-🔑 Generated wallet: rN8EKKrAUssHUjZiGLUZzwkhTgafaTGr1x
-💰 Wallet funded on testnet
-🆔 DID registered: { did: 'did:xrpl:1:rN8EKKr...', txHash: 'DE0E753...' }
+ChainAuth SDK initialized and connected to wss://s.altnet.rippletest.net:51233
+Using REAL XRPL login
+Generated wallet: rN8EKKrAUssHUjZiGLUZzwkhTgafaTGr1x
+Wallet funded on testnet
+DID registered: { did: 'did:xrpl:1:rN8EKKr...', txHash: 'DE0E753...' }
 ```
 > "Watch the console - we're connecting to XRPL testnet, generating a wallet, funding it, and registering a DID on the blockchain. All in real-time!"
 
 **What to Look Out For:**
-- ⚠️ If real mode takes >30 seconds → testnet faucet might be slow (fallback is built in)
-- ✅ Toast notifications should appear (top-right)
-- ✅ Smooth animations on button state changes
+- If real mode takes >30 seconds → testnet faucet might be slow (fallback is built in)
+- Toast notifications should appear (top-right)
+- Smooth animations on button state changes
 
 ---
 
@@ -117,17 +117,17 @@ Button states:
 **What You'll See:**
 ```
 ┌─────────────────────────────────────────────────┐
-│  Your Digital Identity                           │
-│                                                  │
+│  Your Digital Identity                          │
+│                                                 │
 │  DID: did:xrpl:1:rN8EKKrAUssHUjZiGLUZzwkhT...   │
-│  [Copy] 📋                                       │
-│                                                  │
+│  [Copy] ``                                      │
+│                                                 │
 │  XRPL Address: rN8EKKrAUssHUjZiGLUZzwkhTga...   │
-│  [Copy] 📋                                       │
-│                                                  │
-│  ✅ W3C DID Compliant                           │
-│                                                  │
-│  📄 View DID Document ▼                         │
+│  [Copy]                                         │
+│                                                 │
+│  W3C DID Compliant                              │
+│                                                 │
+│  View DID Document ▼                            │
 └─────────────────────────────────────────────────┘
 ```
 

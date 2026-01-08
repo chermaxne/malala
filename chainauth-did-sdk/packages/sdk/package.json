@@ -2,13 +2,16 @@
   "name": "@chainauth/sdk",
   "version": "0.1.0",
   "description": "ChainAuth DID SDK for XRPL",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "vitest",
     "test:watch": "vitest watch",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "verify": "tsx scripts/verify-real-addresses.ts",
+    "demo": "tsx scripts/demo.ts"
   },
   "keywords": [
     "xrpl",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "eslint": "^8.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
   }

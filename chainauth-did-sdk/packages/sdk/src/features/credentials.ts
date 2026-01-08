@@ -1,8 +1,19 @@
 import { Wallet, Payment, convertStringToHex } from 'xrpl';
-import { createHash } from 'crypto';
 import { XRPLClient } from '../core/client';
 import { CredentialError } from '../utils/errors';
 import { VerifiableCredential } from '../types';
+
+/**
+ * Browser-compatible SHA256 hash function using Web Crypto API
+ */
+async function sha256Hash(data: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const dataBuffer = encoder.encode(data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex.toUpperCase();
+}
 
 export class CredentialManager {
   constructor(private client: XRPLClient) { }
@@ -18,7 +29,7 @@ export class CredentialManager {
   ): Promise<{ hash: string; txHash: string }> {
     // 1. Hash the credential (canonical stringify is ideal, but JSON.stringify for MVP)
     const credString = JSON.stringify(credential);
-    const hash = createHash('sha256').update(credString).digest('hex').toUpperCase();
+    const hash = await sha256Hash(credString);
 
     // 2. Anchor on XRPL via Memo
     // Send 1 drop to self to carry the memo
@@ -77,7 +88,7 @@ export class CredentialManager {
     }
 
     const credString = JSON.stringify(credential);
-    const calculatedHash = createHash('sha256').update(credString).digest('hex').toUpperCase();
+    const calculatedHash = await sha256Hash(credString);
 
     return this.verifyAnchoredHash(proofTxHash, calculatedHash, credential.issuer);
   }
